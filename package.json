@@ -1,0 +1,105 @@
+{
+  "name": "verify-vault",
+  "displayName": "IBM Verify Vault for AI agents",
+  "description": "Personal project, not an IBM product, not supported by IBM, use at your own risk. Requires an OIDC provider and a HashiCorp Vault instance. Sign in with IBM Verify; run commands with secrets resolved from HashiCorp Vault so the agent never sees a value.",
+  "publisher": "ibm",
+  "version": "0.3.4",
+  "private": true,
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/iamidentity-ai/vscode-verify-vault"
+  },
+  "engines": {
+    "vscode": "^1.104.0"
+  },
+  "main": "./dist/extension.js",
+  "icon": "media/icon.png",
+  "activationEvents": [
+    "onUri",
+    "onAuthenticationRequest:ibm-verify",
+    "onMcpServerDefinitionProvider:verify-vault.broker"
+  ],
+  "contributes": {
+    "authentication": [
+      {
+        "id": "ibm-verify",
+        "label": "IBM Verify"
+      }
+    ],
+    "mcpServerDefinitionProviders": [
+      {
+        "id": "verify-vault.broker",
+        "label": "Vault dev broker (IBM Verify)"
+      }
+    ],
+    "commands": [
+      {
+        "command": "verifyVault.signIn",
+        "title": "IBM Verify Vault: Sign in"
+      },
+      {
+        "command": "verifyVault.copyToken",
+        "title": "IBM Verify Vault: Copy access token (dev aid)"
+      },
+      {
+        "command": "verifyVault.putSecret",
+        "title": "IBM Verify Vault: Store a secret in Vault"
+      }
+    ],
+    "configuration": {
+      "title": "IBM Verify Vault",
+      "properties": {
+        "verifyVault.tenant": {
+          "type": "string",
+          "default": "",
+          "description": "IBM Verify tenant base URL, for example https://<tenant>.verify.ibm.com (required)"
+        },
+        "verifyVault.clientId": {
+          "type": "string",
+          "default": "",
+          "description": "OIDC client id of the public PKCE app registered on your tenant (required)"
+        },
+        "verifyVault.vaultAddr": {
+          "type": "string",
+          "default": "",
+          "description": "Vault address, for example https://vault.example.com (required)"
+        },
+        "verifyVault.vaultJwtMount": {
+          "type": "string",
+          "default": "verify-dev",
+          "description": "Vault jwt auth mount that trusts the Verify tenant"
+        },
+        "verifyVault.vaultJwtRole": {
+          "type": "string",
+          "default": "developer",
+          "description": "Role on that mount"
+        },
+        "verifyVault.vaultNamespace": {
+          "type": "string",
+          "default": "",
+          "description": "Vault Enterprise / HCP Vault Dedicated namespace (for example admin). Empty for no namespace."
+        }
+      }
+    }
+  },
+  "scripts": {
+    "build": "node esbuild.mjs",
+    "typecheck": "tsc -p tsconfig.json",
+    "test": "tsx --test tests/*.test.ts",
+    "package": "npm run build && vsce package --no-dependencies --baseContentUrl https://github.com/iamidentity-ai/vscode-verify-vault/raw/main --baseImagesUrl https://github.com/iamidentity-ai/vscode-verify-vault/raw/main",
+    "register-app": "tsx scripts/register-verify-app.ts"
+  },
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "1.30.0",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "@types/vscode": "1.104.0",
+    "@vscode/vsce": "^4.0.0",
+    "esbuild": "^0.25.0",
+    "tsx": "^4.20.0",
+    "typescript": "^5.9.0"
+  }
+}

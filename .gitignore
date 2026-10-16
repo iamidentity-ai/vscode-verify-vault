@@ -1,0 +1,8 @@
+node_modules/
+dist/
+*.vsix
+.env
+.env.*
+!.env.vault.example
+.mcp.json
+verify-app.json
